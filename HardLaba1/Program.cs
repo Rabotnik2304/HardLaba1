@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection.PortableExecutable;
 using System.Text.RegularExpressions;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace HardLaba1
 {
@@ -38,7 +40,14 @@ namespace HardLaba1
                 List<Book> books = BooksInitialization();
                 List<Statistic> statistics = StatisticsInitialization(books, readers);
 
+                int maxLenAuthor = MaxLenAuthorInitialization(books);
 
+                int maxLenNameBook = MaxLenNameBookInitialization(books);
+
+                int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
+
+                HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
+                TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
             }
             catch (ArgumentException ex)
             {
@@ -47,6 +56,113 @@ namespace HardLaba1
                 Console.WriteLine(ex.Message);
             }
 
+        }
+
+        private static void TableInitialization(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
+        {
+            foreach (Book book in books)
+            {
+                Console.Write("| ");
+                Console.Write(book.Author.PadRight(maxLenAuthor));
+                Console.Write(" | ");
+
+                Console.Write(book.Name.PadRight(maxLenNameBook));
+                Console.Write(" | ");
+
+                string readerName = "";
+                DateTime takeDate = DateTime.MinValue;
+
+                foreach (Statistic statistic in statistics)
+                {
+                    if (statistic.Book.Id == book.Id)
+                    {
+                        readerName = statistic.Reader.FullName;
+                        takeDate = statistic.TakeDate;
+                    }
+                }
+
+                Console.Write(readerName.PadRight(maxLenNameReader));
+                Console.Write(" | ");
+
+                if (takeDate != DateTime.MinValue)
+                {
+                    Console.Write(takeDate.ToShortDateString());
+                }
+                else
+                {
+                    Console.Write("".PadRight(10));
+                }
+
+                Console.WriteLine(" |");
+            }
+        }
+
+        private static void HeadingInitialization(int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
+        {
+            Console.Write("| ");
+            Console.Write("Автор".PadRight(maxLenAuthor));
+            Console.Write(" | ");
+
+            Console.Write("Название".PadRight(maxLenNameBook));
+            Console.Write(" | ");
+
+            Console.Write("Читает".PadRight(maxLenNameReader));
+            Console.Write(" | ");
+
+            Console.Write("Взял".PadRight(10));
+            Console.WriteLine(" |");
+
+            Console.Write("| ");
+            Console.Write("".PadRight(maxLenAuthor, '-'));
+            Console.Write(" | ");
+
+            Console.Write("".PadRight(maxLenNameBook, '-'));
+            Console.Write(" | ");
+
+            Console.Write("".PadRight(maxLenNameReader, '-'));
+            Console.Write(" | ");
+
+            Console.Write("".PadRight(10, '-'));
+            Console.WriteLine(" |");
+        }
+
+        private static int MaxLenNameReaderInitialization(List<Reader> readers, List<Book> books , List<Statistic> statistics)
+        {
+            int maxLenNameReader = 0;
+
+            foreach (Book book in books)
+            {
+                foreach (Statistic statistic in statistics)
+                {
+                    if (statistic.Book.Id == book.Id)
+                    {
+                        maxLenNameReader = Math.Max(maxLenNameReader, statistic.Reader.FullName.Length);
+                        break;
+                    }
+                }
+            }
+
+            return maxLenNameReader;
+        }
+
+        private static int MaxLenAuthorInitialization(List<Book> books)
+        {
+            int maxLenAuthor = 0;
+            foreach (Book book in books)
+            {
+                maxLenAuthor = Math.Max(maxLenAuthor, book.Author.Length);
+            }
+            return maxLenAuthor;
+        }
+        private static int MaxLenNameBookInitialization(List<Book> books)
+        {
+            int maxLenNameBook = 0;
+            foreach (Book book in books)
+            {
+                
+                maxLenNameBook = Math.Max(maxLenNameBook, book.Name.Length);
+            }
+            return maxLenNameBook;
         }
 
         private static List<Reader> ReadersInitialization()
