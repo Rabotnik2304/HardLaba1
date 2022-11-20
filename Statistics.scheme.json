@@ -1,0 +1,33 @@
+{
+  "name": "Statistics",
+  "columns": [
+    {
+      "name": "id",
+      "type": "uint",
+      "isPrimary": true
+    },
+    {
+      "name": "readerId",
+      "type": "uint",
+      "referencedTable": "Reader",
+      "isPrimary": false
+    },
+    {
+      "name": "bookId",
+      "type": "uint",
+      "referencedTable": "Book",
+      "isPrimary": false
+    },
+    {
+      "name": "takeDate",
+      "type": "datetime",
+      "isPrimary": false
+    },
+    {
+      "name": "returnDate",
+      "type": "datetime",
+      "isPrimary": false
+    }
+  ]
+}
+
