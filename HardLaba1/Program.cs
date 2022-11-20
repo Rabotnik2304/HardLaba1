@@ -55,7 +55,6 @@ namespace HardLaba1
                 Console.Write("Ошибка:");
                 Console.WriteLine(ex.Message);
             }
-            Console.ReadLine();
         }
 
         private static void TableInitialization(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
@@ -137,7 +136,6 @@ namespace HardLaba1
                     if (statistic.Book.Id == book.Id)
                     {
                         maxLenNameReader = Math.Max(maxLenNameReader, statistic.Reader.FullName.Length);
-                        break;
                     }
                 }
             }
@@ -159,7 +157,6 @@ namespace HardLaba1
             int maxLenNameBook = 0;
             foreach (Book book in books)
             {
-                
                 maxLenNameBook = Math.Max(maxLenNameBook, book.Name.Length);
             }
             return maxLenNameBook;
