@@ -55,7 +55,7 @@ namespace HardLaba1
                 Console.Write("Ошибка:");
                 Console.WriteLine(ex.Message);
             }
-
+            Console.ReadLine();
         }
 
         private static void TableInitialization(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
