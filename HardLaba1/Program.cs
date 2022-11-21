@@ -3,6 +3,11 @@ using System.Globalization;
 using System.Reflection.PortableExecutable;
 using System.Text.RegularExpressions;
 using static System.Reflection.Metadata.BlobBuilder;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Schema;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using Newtonsoft.Json.Serialization;
 
 namespace HardLaba1
 {
@@ -28,33 +33,60 @@ namespace HardLaba1
         public DateTime TakeDate;
         public DateTime ReturnDate;
     }
-    public class Program
+    public class Scheme
     {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+        [JsonProperty("columns")]
+        public List<SchemeColumn> Columns { get; set; }
+    }
+    public class SchemeColumn
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+        
+    }
+    public class Program
+    {   
         static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-                       
-            try
+
+            Scheme f = readJson("Book.scheme.json");
+            foreach (var c in f.Columns)
             {
-                List<Reader> readers = ReadersInitialization();
-                List<Book> books = BooksInitialization();
-                List<Statistic> statistics = StatisticsInitialization(books, readers);
-
-                int maxLenAuthor = MaxLenAuthorInitialization(books);
-
-                int maxLenNameBook = MaxLenNameBookInitialization(books);
-
-                int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
-
-                HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
-                TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
+                Console.WriteLine(c.Name);
+                Console.WriteLine(c.Type);
             }
-            catch (ArgumentException ex)
-            {
-                Console.Clear();
-                Console.Write("Ошибка:");
-                Console.WriteLine(ex.Message);
-            }
+
+            //try
+            //{
+            //    List<Reader> readers = ReadersInitialization();
+            //    List<Book> books = BooksInitialization();
+            //    List<Statistic> statistics = StatisticsInitialization(books, readers);
+
+            //    int maxLenAuthor = MaxLenAuthorInitialization(books);
+
+            //    int maxLenNameBook = MaxLenNameBookInitialization(books);
+
+            //    int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
+
+            //    HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
+            //    TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
+            //}
+            //catch (ArgumentException ex)
+            //{
+            //    Console.Clear();
+            //    Console.Write("Ошибка:");
+            //    Console.WriteLine(ex.Message);
+            //}
+        }
+        private static Scheme readJson(string path)
+        {
+            return JsonConvert.DeserializeObject<Scheme>(File.ReadAllText(path));
         }
 
         private static void TableInitialization(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
