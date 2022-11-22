@@ -33,60 +33,33 @@ namespace HardLaba1
         public DateTime TakeDate;
         public DateTime ReturnDate;
     }
-    public class Scheme
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-        [JsonProperty("columns")]
-        public List<SchemeColumn> Columns { get; set; }
-    }
-    public class SchemeColumn
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("type")]
-        public string Type { get; set; }
-        
-    }
     public class Program
     {   
         static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            Scheme f = readJson("Book.scheme.json");
-            foreach (var c in f.Columns)
+            try
             {
-                Console.WriteLine(c.Name);
-                Console.WriteLine(c.Type);
+                List<Reader> readers = ReadersInitialization();
+                List<Book> books = BooksInitialization();
+                List<Statistic> statistics = StatisticsInitialization(books, readers);
+
+                int maxLenAuthor = MaxLenAuthorInitialization(books);
+
+                int maxLenNameBook = MaxLenNameBookInitialization(books);
+
+                int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
+
+                HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
+                TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
             }
-
-            //try
-            //{
-            //    List<Reader> readers = ReadersInitialization();
-            //    List<Book> books = BooksInitialization();
-            //    List<Statistic> statistics = StatisticsInitialization(books, readers);
-
-            //    int maxLenAuthor = MaxLenAuthorInitialization(books);
-
-            //    int maxLenNameBook = MaxLenNameBookInitialization(books);
-
-            //    int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
-
-            //    HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
-            //    TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
-            //}
-            //catch (ArgumentException ex)
-            //{
-            //    Console.Clear();
-            //    Console.Write("Ошибка:");
-            //    Console.WriteLine(ex.Message);
-            //}
-        }
-        private static Scheme readJson(string path)
-        {
-            return JsonConvert.DeserializeObject<Scheme>(File.ReadAllText(path));
+            catch (ArgumentException ex)
+            {
+                Console.Clear();
+                Console.Write("Ошибка:");
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static void TableInitialization(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
