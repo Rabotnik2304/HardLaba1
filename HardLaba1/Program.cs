@@ -1,15 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection.PortableExecutable;
-using System.Text.RegularExpressions;
-using static System.Reflection.Metadata.BlobBuilder;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Schema;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using Newtonsoft.Json.Serialization;
-
-namespace HardLaba1
+﻿namespace HardLaba1
 {
     public class Reader
     {
