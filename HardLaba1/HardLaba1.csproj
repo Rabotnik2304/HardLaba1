@@ -11,4 +11,30 @@
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Schemes\" />
+    <Folder Include="Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\Book.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Reader.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Statistics.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Schemes\Book.scheme.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Schemes\Reader.scheme.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Schemes\Statistics.scheme.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

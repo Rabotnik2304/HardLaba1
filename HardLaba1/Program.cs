@@ -30,16 +30,19 @@
 
             try
             {
-                List<Reader> readers = ReadersInitialization();
-                List<Book> books = BooksInitialization();
-                List<Statistic> statistics = StatisticsInitialization(books, readers);
+                // Записываем данные из Reader.csv, Book.csv и Statistics.csv в соответствующие списки.
+                List<Reader> readers = ReadersInitialization("Data\\Reader.csv");
+                List<Book> books = BooksInitialization("Data\\Book.csv");
+                List<Statistic> statistics = StatisticsInitialization("Data\\Statistics.csv", books, readers);
+
 
                 int maxLenAuthor = MaxLenAuthorInitialization(books);
 
                 int maxLenNameBook = MaxLenNameBookInitialization(books);
-
+                
+                // находим максимальную длину имени читателя, который взял книгу
                 int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
-
+                 
                 HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
                 TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
             }
@@ -62,15 +65,16 @@
                 Console.Write(book.Name.PadRight(maxLenNameBook));
                 Console.Write(" | ");
 
+                // проверяем - взял ли кто-то эту книгу и если да, записываем его имя и когда он ёё взял
                 string readerName = "";
                 DateTime takeDate = DateTime.MinValue;
-
                 foreach (Statistic statistic in statistics)
                 {
                     if (statistic.Book.Id == book.Id)
                     {
                         readerName = statistic.Reader.FullName;
                         takeDate = statistic.TakeDate;
+                        break;
                     }
                 }
 
@@ -156,10 +160,10 @@
             return maxLenNameBook;
         }
 
-        private static List<Reader> ReadersInitialization()
+        private static List<Reader> ReadersInitialization(string path)
         {
             List < Reader > readers = new List < Reader >();
-            string[] allLinesReader = File.ReadAllLines("Reader.csv");
+            string[] allLinesReader = File.ReadAllLines(path);
             for (int i = 0; i < allLinesReader.Length; i++)
             {
                 string[] elementsOfLine = allLinesReader[i].Split(";");
@@ -181,15 +185,16 @@
             }
             return readers;
         }
-        private static List<Book> BooksInitialization()
+        private static List<Book> BooksInitialization(string path)
         {
             List<Book> books = new List<Book>();
-            string[] allLinesBook = File.ReadAllLines("Book.csv");
+            string[] allLinesBook = File.ReadAllLines(path);
             
             for (int i = 0; i < allLinesBook.Length; i++)
             {
                 string[] elementsOfLine = allLinesBook[i].Split(";");
 
+                // парсим данные из одной строчки файла Book.csv
                 uint id, bookcaseNumber, shelfNumber;
                 DateTime publicationDate;
                 BooksLineInitialization(i, elementsOfLine, out id, out publicationDate, out bookcaseNumber, out shelfNumber);
@@ -251,16 +256,17 @@
             }
         }
 
-        private static List<Statistic> StatisticsInitialization(List<Book> books, List<Reader> readers)
+        private static List<Statistic> StatisticsInitialization(string path, List<Book> books, List<Reader> readers)
         {
             
             List<Statistic> statistics = new List<Statistic>();
-            string[] allLinesStatistics = File.ReadAllLines("Statistics.csv");
+            string[] allLinesStatistics = File.ReadAllLines(path);
 
             for (int i = 0; i < allLinesStatistics.Length; i++)
             {
                 string[] elementsOfLine = allLinesStatistics[i].Split(";");
 
+                // парсим данные из одной строчки файла Statistics.csv
                 uint id, readerId, bookId;
                 DateTime takeDate, returnDate;
                 StatisticsLineInitialization(i, elementsOfLine, out id, out readerId, out bookId, out takeDate, out returnDate);
@@ -277,7 +283,6 @@
                     TakeDate = takeDate,
                     ReturnDate = returnDate,
                 });
-
             }
             return statistics;
         }
