@@ -1,27 +1,5 @@
 ﻿namespace HardLaba1
 {
-    public class Reader
-    {
-        public uint Id;
-        public string FullName;
-    }
-    public class Book
-    {
-        public uint Id;
-        public string Author;
-        public string Name;
-        public DateTime PublicationDate;
-        public uint BookcaseNumber;
-        public uint ShelfNumber;
-    }
-    public class Statistic
-    {
-        public uint Id;
-        public Reader Reader;
-        public Book Book;
-        public DateTime TakeDate;
-        public DateTime ReturnDate;
-    }
     public class Program
     {   
         static void Main()
