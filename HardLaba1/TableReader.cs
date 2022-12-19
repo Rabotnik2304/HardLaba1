@@ -37,29 +37,32 @@ namespace HardLaba1
 
         private static void ReadBooksLine(int i, string[] elementsOfLine, out uint id, out DateTime publicationDate, out uint bookcaseNumber, out uint shelfNumber)
         {
-            if (elementsOfLine.Length > 6)
-            {
-                throw new ArgumentException($"В файле Book.csv в строке {i + 1} столбцов больше чем 6");
-            }
+            СheckBooksLineLength(i, elementsOfLine);
 
-            if (uint.TryParse(elementsOfLine[0], out id))
+            id = ReadBookId(i, elementsOfLine);
+            publicationDate = ReadBookPublicationDate(i, elementsOfLine);
+            bookcaseNumber = ReadBookBookcaseNumber(i, elementsOfLine);
+            shelfNumber = ReadBookShelfNumber(i, elementsOfLine);
+        }
+
+        private static uint ReadBookShelfNumber(int i, string[] elementsOfLine)
+        {
+            uint shelfNumber;
+            if (uint.TryParse(elementsOfLine[5], out shelfNumber))
             {
-                id = id;
+                shelfNumber = shelfNumber;
             }
             else
             {
-                throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 1 записаны некорректные данные");
+                throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 6 записаны некорректные данные");
             }
 
-            if (DateTime.TryParse(elementsOfLine[3], out publicationDate))
-            {
-                publicationDate = publicationDate;
-            }
-            else
-            {
-                throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 4 записаны некорректные данные");
-            }
+            return shelfNumber;
+        }
 
+        private static uint ReadBookBookcaseNumber(int i, string[] elementsOfLine)
+        {
+            uint bookcaseNumber;
             if (uint.TryParse(elementsOfLine[4], out bookcaseNumber))
             {
                 bookcaseNumber = bookcaseNumber;
@@ -69,13 +72,44 @@ namespace HardLaba1
                 throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 5 записаны некорректные данные");
             }
 
-            if (uint.TryParse(elementsOfLine[5], out shelfNumber))
+            return bookcaseNumber;
+        }
+
+        private static DateTime ReadBookPublicationDate(int i, string[] elementsOfLine)
+        {
+            DateTime publicationDate;
+            if (DateTime.TryParse(elementsOfLine[3], out publicationDate))
             {
-                shelfNumber = shelfNumber;
+                publicationDate = publicationDate;
             }
             else
             {
-                throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 6 записаны некорректные данные");
+                throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 4 записаны некорректные данные");
+            }
+
+            return publicationDate;
+        }
+
+        private static uint ReadBookId(int i, string[] elementsOfLine)
+        {
+            uint id;
+            if (uint.TryParse(elementsOfLine[0], out id))
+            {
+                id = id;
+            }
+            else
+            {
+                throw new ArgumentException($"В файле Book.csv в строке {i + 1} в столбце 1 записаны некорректные данные");
+            }
+
+            return id;
+        }
+
+        private static void СheckBooksLineLength(int i, string[] elementsOfLine)
+        {
+            if (elementsOfLine.Length > 6)
+            {
+                throw new ArgumentException($"В файле Book.csv в строке {i + 1} столбцов больше чем 6");
             }
         }
 
@@ -160,47 +194,29 @@ namespace HardLaba1
 
         private static void ReadStatisticsLine(int i, string[] elementsOfLine, out uint id, out uint readerId, out uint bookId, out DateTime takeDate, out DateTime returnDate)
         {
-            if (elementsOfLine.Length > 5)
-            {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} столбцов больше чем 5");
-            }
+            
+            СheckStatisticsLineLength(i, elementsOfLine);
 
-            if (uint.TryParse(elementsOfLine[0], out id))
-            {
-                id = id;
-            }
-            else
-            {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 1 записаны некорректные данные");
-            }
+            id = StatisticsLineId(i, elementsOfLine);
+            readerId = StatisticsLineReaderId(i, elementsOfLine);
+            bookId = StatisticsLineBookId(i, elementsOfLine);
+            takeDate = StatisticsLineTakeDate(i, elementsOfLine);
+            returnDate = StatisticsLineReturnDate(i, elementsOfLine);
 
-            if (uint.TryParse(elementsOfLine[1], out readerId))
-            {
-                readerId = readerId;
-            }
-            else
-            {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 2 записаны некорректные данные");
-            }
+            СheckDate(i, takeDate, returnDate);
+        }
 
-            if (uint.TryParse(elementsOfLine[2], out bookId))
+        private static void СheckDate(int i, DateTime takeDate, DateTime returnDate)
+        {
+            if (takeDate > returnDate)
             {
-                bookId = bookId;
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} читатель вернул книгу до того как её взять");
             }
-            else
-            {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 3 записаны некорректные данные");
-            }
+        }
 
-            if (DateTime.TryParse(elementsOfLine[3], out takeDate))
-            {
-                takeDate = takeDate;
-            }
-            else
-            {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 4 записаны некорректные данные");
-            }
-
+        private static DateTime StatisticsLineReturnDate(int i, string[] elementsOfLine)
+        {
+            DateTime returnDate;
             if (DateTime.TryParse(elementsOfLine[4], out returnDate))
             {
                 returnDate = returnDate;
@@ -210,9 +226,74 @@ namespace HardLaba1
                 throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 5 записаны некорректные данные");
             }
 
-            if (takeDate > returnDate)
+            return returnDate;
+        }
+
+        private static DateTime StatisticsLineTakeDate(int i, string[] elementsOfLine)
+        {
+            DateTime takeDate;
+            if (DateTime.TryParse(elementsOfLine[3], out takeDate))
             {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} читатель вернул книгу до того как её взять");
+                takeDate = takeDate;
+            }
+            else
+            {
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 4 записаны некорректные данные");
+            }
+
+            return takeDate;
+        }
+
+        private static uint StatisticsLineBookId(int i, string[] elementsOfLine)
+        {
+            uint bookId;
+            if (uint.TryParse(elementsOfLine[2], out bookId))
+            {
+                bookId = bookId;
+            }
+            else
+            {
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 3 записаны некорректные данные");
+            }
+
+            return bookId;
+        }
+
+        private static uint StatisticsLineReaderId(int i, string[] elementsOfLine)
+        {
+            uint readerId;
+            if (uint.TryParse(elementsOfLine[1], out readerId))
+            {
+                readerId = readerId;
+            }
+            else
+            {
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 2 записаны некорректные данные");
+            }
+
+            return readerId;
+        }
+
+        private static uint StatisticsLineId(int i, string[] elementsOfLine)
+        {
+            uint id;
+            if (uint.TryParse(elementsOfLine[0], out id))
+            {
+                id = id;
+            }
+            else
+            {
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 1 записаны некорректные данные");
+            }
+
+            return id;
+        }
+
+        private static void СheckStatisticsLineLength(int i, string[] elementsOfLine)
+        {
+            if (elementsOfLine.Length > 5)
+            {
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} столбцов больше чем 5");
             }
         }
 
