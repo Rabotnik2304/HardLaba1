@@ -9,20 +9,20 @@
             try
             {
                 // Записываем данные из Reader.csv, Book.csv и Statistics.csv в соответствующие списки.
-                List<Reader> readers = ReadersInitialization("Data\\Reader.csv");
-                List<Book> books = BooksInitialization("Data\\Book.csv");
-                List<Statistic> statistics = StatisticsInitialization("Data\\Statistics.csv", books, readers);
+                List<Reader> readers = ReadReaders("Data\\Reader.csv");
+                List<Book> books = ReadBooks("Data\\Book.csv");
+                List<Statistic> statistics = ReadStatistics("Data\\Statistics.csv", books, readers);
 
 
-                int maxLenAuthor = MaxLenAuthorInitialization(books);
+                int maxLenAuthor = FindMaxLenAuthor(books);
 
-                int maxLenNameBook = MaxLenNameBookInitialization(books);
+                int maxLenNameBook = FindMaxLenNameBook(books);
                 
                 // находим максимальную длину имени читателя, который взял книгу
-                int maxLenNameReader = MaxLenNameReaderInitialization(readers, books, statistics);
+                int maxLenNameReader = FindMaxLenNameReader(readers, books, statistics);
                  
-                HeadingInitialization(maxLenAuthor, maxLenNameBook, maxLenNameReader);
-                TableInitialization(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
+                ReturnHeading(maxLenAuthor, maxLenNameBook, maxLenNameReader);
+                ReturnTable(books, statistics, maxLenAuthor, maxLenNameBook, maxLenNameReader);
             }
             catch (ArgumentException ex)
             {
@@ -32,7 +32,7 @@
             }
         }
 
-        private static void TableInitialization(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
+        private static void ReturnTable(List<Book> books, List<Statistic> statistics, int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
         {
             foreach (Book book in books)
             {
@@ -65,14 +65,14 @@
                 }
                 else
                 {
-                    Console.Write("".PadRight(10));
+                    Console.Write(new string(' ', 10));
                 }
 
                 Console.WriteLine(" |");
             }
         }
 
-        private static void HeadingInitialization(int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
+        private static void ReturnHeading(int maxLenAuthor, int maxLenNameBook, int maxLenNameReader)
         {
             Console.Write("| ");
             Console.Write("Автор".PadRight(maxLenAuthor));
@@ -88,20 +88,20 @@
             Console.WriteLine(" |");
 
             Console.Write("| ");
-            Console.Write("".PadRight(maxLenAuthor, '-'));
+            Console.Write(new string('-', maxLenAuthor));
             Console.Write(" | ");
 
-            Console.Write("".PadRight(maxLenNameBook, '-'));
+            Console.Write(new string('-', maxLenNameBook));
             Console.Write(" | ");
 
-            Console.Write("".PadRight(maxLenNameReader, '-'));
+            Console.Write(new string('-', maxLenNameReader));
             Console.Write(" | ");
 
             Console.Write("".PadRight(10, '-'));
             Console.WriteLine(" |");
         }
 
-        private static int MaxLenNameReaderInitialization(List<Reader> readers, List<Book> books , List<Statistic> statistics)
+        private static int FindMaxLenNameReader(List<Reader> readers, List<Book> books , List<Statistic> statistics)
         {
             int maxLenNameReader = 0;
 
@@ -119,7 +119,7 @@
             return maxLenNameReader;
         }
 
-        private static int MaxLenAuthorInitialization(List<Book> books)
+        private static int FindMaxLenAuthor(List<Book> books)
         {
             int maxLenAuthor = 0;
             foreach (Book book in books)
@@ -128,7 +128,7 @@
             }
             return maxLenAuthor;
         }
-        private static int MaxLenNameBookInitialization(List<Book> books)
+        private static int FindMaxLenNameBook(List<Book> books)
         {
             int maxLenNameBook = 0;
             foreach (Book book in books)
@@ -137,37 +137,11 @@
             }
             return maxLenNameBook;
         }
-
-        private static List<Reader> ReadersInitialization(string path)
-        {
-            List < Reader > readers = new List < Reader >();
-            string[] allLinesReader = File.ReadAllLines(path);
-            for (int i = 0; i < allLinesReader.Length; i++)
-            {
-                string[] elementsOfLine = allLinesReader[i].Split(";");
-                
-                if (elementsOfLine.Length > 2)
-                {
-                    throw new ArgumentException($"В файле Reader.csv в строке {i + 1} столбцов больше чем 2");
-                }
-                if (uint.TryParse(elementsOfLine[0], out uint id))
-                {
-                    id = id;
-                }
-                else
-                {
-                    throw new ArgumentException($"В файле Reader.csv в строке {i + 1} в столбце 1 записаны некорректные данные");
-                }
-
-                readers.Add(new Reader { Id = id, FullName = elementsOfLine[1] });
-            }
-            return readers;
-        }
-        private static List<Book> BooksInitialization(string path)
+        private static List<Book> ReadBooks(string path)
         {
             List<Book> books = new List<Book>();
             string[] allLinesBook = File.ReadAllLines(path);
-            
+
             for (int i = 0; i < allLinesBook.Length; i++)
             {
                 string[] elementsOfLine = allLinesBook[i].Split(";");
@@ -175,7 +149,7 @@
                 // парсим данные из одной строчки файла Book.csv
                 uint id, bookcaseNumber, shelfNumber;
                 DateTime publicationDate;
-                BooksLineInitialization(i, elementsOfLine, out id, out publicationDate, out bookcaseNumber, out shelfNumber);
+                ReadBooksLine(i, elementsOfLine, out id, out publicationDate, out bookcaseNumber, out shelfNumber);
 
                 books.Add(new Book
                 {
@@ -190,7 +164,7 @@
             return books;
         }
 
-        private static void BooksLineInitialization(int i, string[] elementsOfLine, out uint id, out DateTime publicationDate, out uint bookcaseNumber, out uint shelfNumber)
+        private static void ReadBooksLine(int i, string[] elementsOfLine, out uint id, out DateTime publicationDate, out uint bookcaseNumber, out uint shelfNumber)
         {
             if (elementsOfLine.Length > 6)
             {
@@ -234,9 +208,35 @@
             }
         }
 
-        private static List<Statistic> StatisticsInitialization(string path, List<Book> books, List<Reader> readers)
+        private static List<Reader> ReadReaders(string path)
         {
-            
+            List<Reader> readers = new List<Reader>();
+            string[] allLinesReader = File.ReadAllLines(path);
+            for (int i = 0; i < allLinesReader.Length; i++)
+            {
+                string[] elementsOfLine = allLinesReader[i].Split(";");
+
+                if (elementsOfLine.Length > 2)
+                {
+                    throw new ArgumentException($"В файле Reader.csv в строке {i + 1} столбцов больше чем 2");
+                }
+                if (uint.TryParse(elementsOfLine[0], out uint id))
+                {
+                    id = id;
+                }
+                else
+                {
+                    throw new ArgumentException($"В файле Reader.csv в строке {i + 1} в столбце 1 записаны некорректные данные");
+                }
+
+                readers.Add(new Reader { Id = id, FullName = elementsOfLine[1] });
+            }
+            return readers;
+        }
+
+        private static List<Statistic> ReadStatistics(string path, List<Book> books, List<Reader> readers)
+        {
+
             List<Statistic> statistics = new List<Statistic>();
             string[] allLinesStatistics = File.ReadAllLines(path);
 
@@ -247,11 +247,11 @@
                 // парсим данные из одной строчки файла Statistics.csv
                 uint id, readerId, bookId;
                 DateTime takeDate, returnDate;
-                StatisticsLineInitialization(i, elementsOfLine, out id, out readerId, out bookId, out takeDate, out returnDate);
+                ReadStatisticsLine(i, elementsOfLine, out id, out readerId, out bookId, out takeDate, out returnDate);
 
-                Reader readerStatistics = StatisticsReaderInitialization(readers, i, readerId);
+                Reader readerStatistics = ReadStatisticsReader(readers, i, readerId);
 
-                Book bookStatistics = StatisticsBookInitialization(books, i, bookId);
+                Book bookStatistics = ReadStatisticsBook(books, i, bookId);
 
                 statistics.Add(new Statistic
                 {
@@ -265,7 +265,29 @@
             return statistics;
         }
 
-        private static void StatisticsLineInitialization(int i, string[] elementsOfLine, out uint id, out uint readerId, out uint bookId, out DateTime takeDate, out DateTime returnDate)
+        private static Book ReadStatisticsBook(List<Book> books, int i, uint bookId)
+        {
+            Book bookStatistics = null;
+            bool bookFlag = false;
+            foreach (Book book in books)
+            {
+                if (book.Id == bookId)
+                {
+                    bookStatistics = book;
+                    bookFlag = true;
+                    break;
+                }
+            }
+
+            if (!bookFlag)
+            {
+                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 3 введено id несуществующей книги");
+            }
+
+            return bookStatistics;
+        }
+
+        private static void ReadStatisticsLine(int i, string[] elementsOfLine, out uint id, out uint readerId, out uint bookId, out DateTime takeDate, out DateTime returnDate)
         {
             if (elementsOfLine.Length > 5)
             {
@@ -323,7 +345,7 @@
             }
         }
 
-        private static Reader StatisticsReaderInitialization(List<Reader> readers, int i, uint readerId)
+        private static Reader ReadStatisticsReader(List<Reader> readers, int i, uint readerId)
         {
             Reader readerStatistics = null;
             bool readerFlag = false;
@@ -343,28 +365,6 @@
             }
 
             return readerStatistics;
-        }
-
-        private static Book StatisticsBookInitialization(List<Book> books, int i, uint bookId)
-        {
-            Book bookStatistics = null;
-            bool bookFlag = false;
-            foreach (Book book in books)
-            {
-                if (book.Id == bookId)
-                {
-                    bookStatistics = book;
-                    bookFlag = true;
-                    break;
-                }
-            }
-
-            if (!bookFlag)
-            {
-                throw new ArgumentException($"В файле Statistics.csv в строке {i + 1} в столбце 3 введено id несуществующей книги");
-            }
-
-            return bookStatistics;
         }
     }
 }
